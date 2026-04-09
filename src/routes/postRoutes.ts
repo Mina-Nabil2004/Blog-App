@@ -1,6 +1,6 @@
 import { Router } from "express";
 import validator from "../middlewares/validator.js";
-import { PostSchema } from "../schemas/postSchema";
+import { PostSchema } from "../schemas/postSchema.js";
 
 const router = Router();
 

@@ -3,7 +3,6 @@ import morgan from 'morgan';
 import logger from "./middlewares/logger.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
-import validator from "./middlewares/validator.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();

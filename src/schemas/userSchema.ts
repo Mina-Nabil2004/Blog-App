@@ -7,4 +7,11 @@ export const UserSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
+export const UserCreateSchema = UserSchema.omit({ id: true });
+export const UserUpdateSchema = UserSchema.partial().omit({ id: true });
+export const UserPublicSchema = UserSchema.omit({ password: true });
+
 export type User = z.infer<typeof UserSchema>;
+export type UserCreate = z.infer<typeof UserCreateSchema>;
+export type UserUpdate = z.infer<typeof UserUpdateSchema>;
+export type UserPublic = z.infer<typeof UserPublicSchema>;

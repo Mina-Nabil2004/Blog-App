@@ -1,6 +1,6 @@
 import { z } from "zod";
-import logger from "./logger";
 import { Request, Response, NextFunction } from "express";
+import ApiError from "../errors/ApiError.js";
 
 function formatZodErrors(error: z.ZodError) {
     return error.issues.reduce((acc: Record<string, string>, err) =>{
@@ -15,8 +15,7 @@ export default function validator(schema: z.ZodSchema) {
         const result = schema.safeParse(req.body);
         if (!result.success) {
             const errors = formatZodErrors(result.error);
-            logger.error('Validation failed', { errors });
-            return res.status(400).json(errors);
+            return next(ApiError.badRequest(errors));
         }
         req.body = result.data;
         next();
