@@ -1,22 +1,24 @@
 import { Router } from "express";
 import validator from "../middlewares/validator.js";
-import { PostSchema } from "../schemas/postSchema.js";
+import { PostCreateSchema, PostUpdateSchema } from "../schemas/postSchema.js";
+import { 
+  createPostController, 
+  deletePostController, 
+  getPostController, 
+  getPostsController, 
+  updatePostController 
+} from "../controllers/postController.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send("Post list");
-});
-router.post("/", (req, res) => {
-  res.send("Post created");
-});
-router.put("/:id", (req, res) => {
-  res.send("Post updated");
-});
-router.delete("/:id", (req, res) => {
-  res.send("Post deleted");
-});
+router.get("/", getPostsController);
 
-router.use(validator(PostSchema));
+router.get("/:id", getPostController);
+
+router.post("/",validator(PostCreateSchema), createPostController);
+
+router.put("/:id", validator(PostUpdateSchema), updatePostController);
+
+router.delete("/:id", deletePostController);
 
 export default router;

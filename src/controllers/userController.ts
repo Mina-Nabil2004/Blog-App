@@ -17,7 +17,7 @@ export function createUserController(req: Request, res: Response) {
 }
 
 export function updateUserController(req: Request, res: Response) {
-    res.status(201).json({ 
+    res.status(200).json({ 
         message: "User updated successfully", 
         user: updateUser(req.params.id as string, req.body) 
     });
