@@ -11,11 +11,12 @@ function formatZodErrors(error: z.ZodError) {
 }
 
 export default function validator(schema: z.ZodSchema) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
         const result = schema.safeParse(req.body);
         if (!result.success) {
             const errors = formatZodErrors(result.error);
-            return next(ApiError.badRequest(errors));
+            next(ApiError.badRequest(errors));
+            return;
         }
         req.body = result.data;
         next();

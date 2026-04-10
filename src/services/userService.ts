@@ -1,14 +1,14 @@
 import ApiError from "../errors/ApiError.js";
-import type { User, UserCreate, UserPublic, UserUpdate } from "../schemas/userSchema";
+import type { User, UserCreate, UserPublic, UserUpdate } from "../schemas/userSchema.js";
 const users: User[] = [];
 
-export function createUser(userData: UserCreate): User {
+export function createUser(userData: UserCreate): UserPublic {
     const emailTaken = users.some((u) => u.email === userData.email);
     if (emailTaken) 
         throw ApiError.badRequest({ email: `Email ${userData.email} is already taken` });
     const newUser: User = {...userData, id: crypto.randomUUID()};
     users.push(newUser);
-    return newUser;
+    return omitPassword(newUser);
 }
 
 function omitPassword(user: User): UserPublic {
@@ -17,9 +17,7 @@ function omitPassword(user: User): UserPublic {
 }
 
 export function getUsers(): UserPublic[] {
-    return users.map(user => {
-        return omitPassword(user);
-    });
+    return users.map(omitPassword);
 }
 
 export function getUser(id: string): UserPublic {

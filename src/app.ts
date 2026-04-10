@@ -7,11 +7,11 @@ import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 app.use(express.json());
-const stream = {
+const morganStream = {
   write: (message:string) => logger.info(message.trim())
 };
 
-app.use(morgan('combined', { stream }));
+app.use(morgan('combined', { stream: morganStream }));
 
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);

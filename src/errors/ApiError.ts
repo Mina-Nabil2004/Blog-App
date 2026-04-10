@@ -1,21 +1,23 @@
-class ApiError {
+class ApiError extends Error {
     statusCode: number;
-    message: Record<string, string>;
-    constructor(statusCode: number, message: Record<string, string>) {
+    errors: Record<string, string>;
+    constructor(statusCode: number, errors: Record<string, string>) {
+        super();
         this.statusCode = statusCode;
-        this.message = message; 
+        this.errors = errors;
+        Object.setPrototypeOf(this, ApiError.prototype);
     }
 
-    static badRequest(message: Record<string, string>) {
-        return new ApiError(400, message);
+    static badRequest(errors: Record<string, string>) {
+        return new ApiError(400, errors);
     }
 
-    static notFound(message: Record<string, string>) {
-        return new ApiError(404, message);
+    static notFound(errors: Record<string, string>) {
+        return new ApiError(404, errors);
     }
 
-    static internal(message: Record<string, string>) {
-        return new ApiError(500, message);
+    static internal(errors: Record<string, string>) {
+        return new ApiError(500, errors);
     }
 }
 
