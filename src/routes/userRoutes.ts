@@ -17,7 +17,7 @@ router.get("/:id", getUserController);
 
 router.post("/",validator(UserCreateSchema), createUserController);
 
-router.put("/:id", validator(UserUpdateSchema), updateUserController);
+router.patch("/:id", validator(UserUpdateSchema), updateUserController);
 
 router.delete("/:id", deleteUserController);
 

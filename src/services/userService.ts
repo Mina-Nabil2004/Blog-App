@@ -33,6 +33,14 @@ export function updateUser(id: string, updatedUser: UserUpdate): UserPublic {
     if (!user) {
         throw ApiError.notFound({ id: `User with id ${id} not found` });
     }
+    if (updatedUser.email) {
+        const emailTaken = users.some(
+            u => u.email === updatedUser.email && u.id !== id
+        );
+        if (emailTaken) {
+            throw ApiError.badRequest({ email: "Email already taken" });
+        }
+    }
     Object.assign(user, updatedUser);
     return omitPassword(user);
 }
