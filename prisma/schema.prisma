@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userID       String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(BASIC)
+  blogs        Blog[]    @relation("UserBlogs")
+  comments     Comment[] @relation("UserComments")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Blog {
+  blogID    String    @id @default(uuid())
+  title     String
+  content   String
+  authorID  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[] @relation("BlogComments")
+  tags      BlogTag[] @relation("BlogTags")
+
+  author User @relation("UserBlogs", fields: [authorID], references: [userID])
+}
+
+model Comment {
+  commentID String   @id @default(uuid())
+  content   String
+  authorID  String
+  blogID    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation("UserComments", fields: [authorID], references: [userID])
+  blog   Blog @relation("BlogComments", fields: [blogID], references: [blogID])
+}
+
+model Tag {
+  tagID String    @id @default(uuid())
+  name  String    @unique
+  blogs BlogTag[] @relation("BlogTags")
+}
+
+model BlogTag {
+  blogID String
+  tagID  String
+
+  blog Blog @relation("BlogTags", fields: [blogID], references: [blogID])
+  tag  Tag  @relation("BlogTags", fields: [tagID], references: [tagID])
+
+  @@id([blogID, tagID])
+}
+
+enum Role {
+  BASIC
+  ADMIN
+}
