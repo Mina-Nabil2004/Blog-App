@@ -1,54 +1,53 @@
 import { NextFunction, Request, Response } from "express";
 import { createUser, deleteUser, getUser, getUsers, updateUser } from "../services/userService.js";
 
-export function getUsersController(_req: Request, res: Response, next: NextFunction) {
+export async function getUsersController(_req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ users: getUsers() });
-    } 
-    catch (error) {
+        const users = await getUsers();
+        res.status(200).json({ users });
+    } catch (error) {
         next(error);
     }
 }
 
-export function getUserController(req: Request, res: Response, next: NextFunction) {
+export async function getUserController(req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ user: getUser(req.params.id as string) });
-    } 
-    catch (error) {
+        const user = await getUser(req.params.id as string);
+        res.status(200).json({ user });
+    } catch (error) {
         next(error);
     }
 }
 
-export function createUserController(req: Request, res: Response, next: NextFunction) {
+export async function createUserController(req: Request, res: Response, next: NextFunction) {
     try {
+        const user = await createUser(req.body);
         res.status(201).json({ 
             message: "User created successfully",
-            user: createUser(req.body)
+            user
         });
-    } 
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }
 
-export function updateUserController(req: Request, res: Response, next: NextFunction) {
+export async function updateUserController(req: Request, res: Response, next: NextFunction) {
     try {
+        const user = await updateUser(req.params.id as string, req.body);
         res.status(200).json({ 
             message: "User updated successfully", 
-            user: updateUser(req.params.id as string, req.body) 
+            user 
         });
-    } 
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }
 
-export function deleteUserController(req: Request, res: Response, next: NextFunction) {
+export async function deleteUserController(req: Request, res: Response, next: NextFunction) {
     try {
-        deleteUser(req.params.id as string);
+        await deleteUser(req.params.id as string);
         res.status(200).json({ message: "User deleted successfully" });
-    } 
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }

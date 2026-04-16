@@ -1,29 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import { createBlog, deleteBlog, getBlog, getBlogs, updateBlog } from "../services/blogService.js";
 
-export function getBlogsController(_req: Request, res: Response, next: NextFunction) {
+export async function getBlogsController(_req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ blogs: getBlogs() });
+        const blogs = await getBlogs();
+        res.status(200).json({ blogs });
     } 
     catch (error) {
         next(error);
     }
 }
 
-export function getBlogController(req: Request, res: Response, next: NextFunction) {
+export async function getBlogController(req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ blog: getBlog(req.params.id as string) });
+        const blog = await getBlog(req.params.id as string);
+        res.status(200).json({ blog });
     } 
     catch (error) {
         next(error);
     }
 }
 
-export function createBlogController(req: Request, res: Response, next: NextFunction) {
+export async function createBlogController(req: Request, res: Response, next: NextFunction) {
     try {
+        const blog = await createBlog(req.body);
         res.status(201).json({ 
             message: "Blog created successfully",
-            blog: createBlog(req.body)
+            blog
         });
     } 
     catch (error) {
@@ -31,11 +34,12 @@ export function createBlogController(req: Request, res: Response, next: NextFunc
     }
 }
 
-export function updateBlogController(req: Request, res: Response, next: NextFunction) {
+export async function updateBlogController(req: Request, res: Response, next: NextFunction) {
     try {
+        const blog = await updateBlog(req.params.id as string, req.body);
         res.status(200).json({ 
             message: "Blog updated successfully", 
-            blog: updateBlog(req.params.id as string, req.body) 
+            blog 
         });
     } 
     catch (error) {
@@ -43,9 +47,9 @@ export function updateBlogController(req: Request, res: Response, next: NextFunc
     }
 }
 
-export function deleteBlogController(req: Request, res: Response, next: NextFunction) {
+export async function deleteBlogController(req: Request, res: Response, next: NextFunction) {
     try {
-        deleteBlog(req.params.id as string);
+        await deleteBlog(req.params.id as string);
         res.status(200).json({ message: "Blog deleted successfully" });
     } 
     catch (error) {

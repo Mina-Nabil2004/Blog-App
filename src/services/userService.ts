@@ -43,6 +43,7 @@ export async function updateUser(id: string, updatedUser: UserUpdate): Promise<U
         }
     }
     Object.assign(user, updatedUser);
+    await prisma.user.update({ where: { userID: id }, data: user });
     return omitPassword(user);
 }
 

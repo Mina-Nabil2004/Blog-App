@@ -3,13 +3,17 @@ import type { Blog, BlogCreate, BlogUpdate } from "../schemas/blogSchema.js";
 import { PrismaClient } from "../generated/prisma/client.js";
 const prisma = new PrismaClient();
 
-export async function createBlog(userData: BlogCreate): Promise<Blog> {
-    const newBlog = await prisma.blog.create({ data: userData });
+export async function createBlog(blogData: BlogCreate): Promise<Blog> {
+    const author = await prisma.user.findUnique({ where: { userID: blogData.authorID } });
+    if (!author) {
+        throw ApiError.badRequest({ authorID: `Author with id ${blogData.authorID} does not exist` });
+    }
+    const newBlog = await prisma.blog.create({ data: blogData });
     return newBlog;
 }
 
 export async function getBlogs(): Promise<Blog[]> {
-    return (await prisma.blog.findMany()).map(blog => ({...blog}));
+    return await prisma.blog.findMany();
 }
 
 export async function getBlog(id: string): Promise<Blog> {
@@ -26,6 +30,7 @@ export async function updateBlog(id: string, updatedBlog: BlogUpdate): Promise<B
         throw ApiError.notFound({ id: `Blog with id ${id} not found` });
     }
     Object.assign(blog, updatedBlog);
+    await prisma.blog.update({ where: { blogID: id }, data: blog });
     return blog;
 }
 
