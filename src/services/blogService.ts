@@ -1,27 +1,27 @@
 import ApiError from "../errors/ApiError.js";
 import type { Blog, BlogCreate, BlogUpdate } from "../schemas/blogSchema.js";
-const blogs: Blog[] = [];
+import { PrismaClient } from "../generated/prisma/client.js";
+const prisma = new PrismaClient();
 
-export function createBlog(userData: BlogCreate): Blog {
-    const newblog: Blog = {...userData, id: crypto.randomUUID()};
-    blogs.push(newblog);
-    return newblog;
+export async function createBlog(userData: BlogCreate): Promise<Blog> {
+    const newBlog = await prisma.blog.create({ data: userData });
+    return newBlog;
 }
 
-export function getBlogs(): Blog[] {
-    return blogs.map(blog => ({ ...blog }));
+export async function getBlogs(): Promise<Blog[]> {
+    return (await prisma.blog.findMany()).map(blog => ({...blog}));
 }
 
-export function getBlog(id: string): Blog {
-    const blog = blogs.find(blog => blog.id === id);
+export async function getBlog(id: string): Promise<Blog> {
+    const blog = await prisma.blog.findUnique({ where: { blogID: id } });
     if (!blog) {
         throw ApiError.notFound({ id: `Blog with id ${id} not found` });
     }
     return blog;
 }
 
-export function updateBlog(id: string, updatedBlog: BlogUpdate): Blog {
-    const blog = blogs.find(blog => blog.id === id);
+export async function updateBlog(id: string, updatedBlog: BlogUpdate): Promise<Blog> {
+    const blog = await prisma.blog.findUnique({ where: { blogID: id } });
     if (!blog) {
         throw ApiError.notFound({ id: `Blog with id ${id} not found` });
     }
@@ -29,10 +29,11 @@ export function updateBlog(id: string, updatedBlog: BlogUpdate): Blog {
     return blog;
 }
 
-export function deleteBlog(id: string): void {
-    const index = blogs.findIndex(blog => blog.id === id);
-    if (index === -1) {
+export async function deleteBlog(id: string): Promise<void> {
+    const blog = await prisma.blog.findUnique({ where: { blogID: id } });
+    if (!blog) {
+
         throw ApiError.notFound({ id: `Blog with id ${id} not found` });
     }
-    blogs.splice(index, 1);
+    await prisma.blog.delete({ where: { blogID: id } });
 }

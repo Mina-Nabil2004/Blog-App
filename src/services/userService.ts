@@ -1,42 +1,43 @@
 import ApiError from "../errors/ApiError.js";
 import type { User, UserCreate, UserPublic, UserUpdate } from "../schemas/userSchema.js";
-const users: User[] = [];
+import { PrismaClient } from "../generated/prisma/client.js";
+const prisma = new PrismaClient();
 
-export function createUser(userData: UserCreate): UserPublic {
-    const emailTaken = users.some((u) => u.email === userData.email);
+export async function createUser(userData: UserCreate): Promise<UserPublic> {
+    const emailTaken = await prisma.user.findUnique({ where: { email: userData.email } });
     if (emailTaken) 
         throw ApiError.badRequest({ email: `Email ${userData.email} is already taken` });
-    const newUser: User = {...userData, id: crypto.randomUUID()};
-    users.push(newUser);
-    return omitPassword(newUser);
+    const newUser: UserCreate = {...userData};
+    const createdUser = await prisma.user.create({ data: newUser });
+    return omitPassword(createdUser);
 }
 
 function omitPassword(user: User): UserPublic {
-    const { password, ...userWithoutPassword } = user;
+    const { passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
 }
 
-export function getUsers(): UserPublic[] {
+export async function getUsers(): Promise<UserPublic[]> {
+    const users = await prisma.user.findMany();
     return users.map(omitPassword);
 }
 
-export function getUser(id: string): UserPublic {
-    const user = users.find(user => user.id === id);
+
+export async function getUser(id: string): Promise<UserPublic> {
+    const user = await prisma.user.findUnique({ where: { userID: id } });
     if (!user) {
         throw ApiError.notFound({ id: `User with id ${id} not found` });
     }
     return omitPassword(user);
 }
 
-export function updateUser(id: string, updatedUser: UserUpdate): UserPublic {
-    const user = users.find(user => user.id === id);
+export async function updateUser(id: string, updatedUser: UserUpdate): Promise<UserPublic> {
+    const user = await prisma.user.findUnique({ where: { userID: id } });
     if (!user) {
         throw ApiError.notFound({ id: `User with id ${id} not found` });
     }
     if (updatedUser.email) {
-        const emailTaken = users.some(
-            u => u.email === updatedUser.email && u.id !== id
-        );
+        const emailTaken = await prisma.user.findUnique({ where: { email: updatedUser.email } });
         if (emailTaken) {
             throw ApiError.badRequest({ email: "Email already taken" });
         }
@@ -45,10 +46,10 @@ export function updateUser(id: string, updatedUser: UserUpdate): UserPublic {
     return omitPassword(user);
 }
 
-export function deleteUser(id: string): void {
-    const index = users.findIndex(user => user.id === id);
-    if (index === -1) {
+export async function deleteUser(id: string): Promise<void> {
+    const user = await prisma.user.findUnique({ where: { userID: id } });
+    if (!user) {
         throw ApiError.notFound({ id: `User with id ${id} not found` });
     }
-    users.splice(index, 1);
+    await prisma.user.delete({ where: { userID: id } });
 }

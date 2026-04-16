@@ -1,15 +1,23 @@
 import { z } from "zod";
 
+export const Role = {
+  BASIC: 'BASIC',
+  ADMIN: 'ADMIN'
+} as const
+
 export const UserSchema = z.object({
-    id: z.string().uuid(),
+    userID: z.string().uuid(),
     name: z.string().min(3, "Name is required"),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
+    passwordHash: z.string().min(8, "Password must be at least 8 characters long"),
+    role: Role,
+    createdAt: z.date(),
+    updatedAt: z.date(),
 });
 
-export const UserCreateSchema = UserSchema.omit({ id: true });
-export const UserUpdateSchema = UserSchema.partial().omit({ id: true });
-export const UserPublicSchema = UserSchema.omit({ password: true });
+export const UserCreateSchema = UserSchema.omit({ userID: true, role: true, createdAt: true, updatedAt: true });
+export const UserUpdateSchema = UserSchema.partial().omit({ userID: true, createdAt: true, updatedAt: true });
+export const UserPublicSchema = UserSchema.omit({ userID: true, passwordHash: true, role: true, createdAt: true, updatedAt: true });
 
 export type User = z.infer<typeof UserSchema>;
 export type UserCreate = z.infer<typeof UserCreateSchema>;
