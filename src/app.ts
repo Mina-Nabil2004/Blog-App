@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from 'morgan';
 import logger from "./middlewares/logger.js";
+import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
@@ -14,6 +15,7 @@ const morganStream = {
 
 app.use(morgan('combined', { stream: morganStream }));
 
+app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/blogs", blogRoutes);
 app.use("/comments", commentRoutes);

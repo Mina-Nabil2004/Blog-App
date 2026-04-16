@@ -12,6 +12,14 @@ class ApiError extends Error {
         return new ApiError(400, errors);
     }
 
+    static unauthorized(errors: Record<string, string>) {
+        return new ApiError(401, errors);
+    }
+
+    static forbidden(errors: Record<string, string>) {
+        return new ApiError(403, errors);
+    }
+
     static notFound(errors: Record<string, string>) {
         return new ApiError(404, errors);
     }

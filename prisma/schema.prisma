@@ -22,6 +22,7 @@ model User {
   role         Role      @default(BASIC)
   blogs        Blog[]    @relation("UserBlogs")
   comments     Comment[] @relation("UserComments")
+  refreshTokens RefreshToken[] @relation("UserRefreshTokens")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -33,6 +34,7 @@ model Blog {
   authorID  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  published Boolean   @default(false)
   comments  Comment[] @relation("BlogComments")
   tags      BlogTag[] @relation("BlogTags")
 
@@ -70,4 +72,14 @@ model BlogTag {
 enum Role {
   BASIC
   ADMIN
+}
+
+model RefreshToken {
+  tokenID   String   @id @default(uuid())
+  token     String   @unique
+  userID    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation("UserRefreshTokens", fields: [userID], references: [userID])
 }

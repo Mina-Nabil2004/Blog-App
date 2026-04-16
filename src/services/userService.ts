@@ -12,7 +12,7 @@ export async function createUser(userData: UserCreate): Promise<UserPublic> {
     return omitPassword(createdUser);
 }
 
-function omitPassword(user: User): UserPublic {
+export function omitPassword(user: User): UserPublic {
     const { passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
 }
@@ -21,7 +21,6 @@ export async function getUsers(): Promise<UserPublic[]> {
     const users = await prisma.user.findMany();
     return users.map(omitPassword);
 }
-
 
 export async function getUser(id: string): Promise<UserPublic> {
     const user = await prisma.user.findUnique({ where: { userID: id } });

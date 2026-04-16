@@ -18,8 +18,16 @@ export const UserSchema = z.object({
 export const UserCreateSchema = UserSchema.omit({ userID: true, role: true, createdAt: true, updatedAt: true });
 export const UserUpdateSchema = UserSchema.partial().omit({ userID: true, createdAt: true, updatedAt: true });
 export const UserPublicSchema = UserSchema.omit({ userID: true, passwordHash: true, role: true, createdAt: true, updatedAt: true });
+export const UserLoginSchema = UserSchema.pick({ email: true, passwordHash: true });
 
 export type User = z.infer<typeof UserSchema>;
 export type UserCreate = z.infer<typeof UserCreateSchema>;
 export type UserUpdate = z.infer<typeof UserUpdateSchema>;
 export type UserPublic = z.infer<typeof UserPublicSchema>;
+export type UserLogin = z.infer<typeof UserLoginSchema>;
+
+export type LoginResponse = {
+    user: UserPublic;
+    accessToken: string;
+    refreshToken: string;
+};
