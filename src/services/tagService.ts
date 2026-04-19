@@ -62,3 +62,13 @@ export async function getBlogTags(blogID: string): Promise<Tag[]> {
     });
     return blogTags.map((blogTag) => blogTag.tag);
 }
+
+export async function getBlogsByTag(tagID: string) {
+    const tag = await prisma.tag.findUnique({ where: { tagID } });
+    if (!tag) throw ApiError.notFound({ tagID: `Tag with id ${tagID} not found` });
+    const blogTags = await prisma.blogTag.findMany({
+        where: { tagID },
+        include: { blog: true },
+    });
+    return blogTags.map((bt) => bt.blog);
+}

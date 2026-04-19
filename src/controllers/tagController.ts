@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createTag, deleteTag, getTag, getTags, updateTag, addTagToBlog, removeTagFromBlog, getBlogTags } from "../services/tagService.js";
+import { createTag, deleteTag, getTag, getTags, updateTag, addTagToBlog, removeTagFromBlog, getBlogTags, getBlogsByTag } from "../services/tagService.js";
 
 export async function getTagsController(_req: Request, res: Response, next: NextFunction) {
     try {
@@ -54,5 +54,12 @@ export async function getBlogTagsController(req: Request, res: Response, next: N
     try {
         const tags = await getBlogTags(req.params.blogID as string);
         res.json({ tags });
+    } catch (err) { next(err); }
+}
+
+export async function getBlogsByTagController(req: Request, res: Response, next: NextFunction) {
+    try {
+        const blogs = await getBlogsByTag(req.params.id as string);
+        res.json({ blogs });
     } catch (err) { next(err); }
 }

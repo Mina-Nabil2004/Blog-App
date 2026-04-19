@@ -10,11 +10,18 @@ export const UserSchema = z.object({
     updatedAt: z.date(),
 });
 
-export const UserCreateSchema = UserSchema.omit({ userID: true, role: true, createdAt: true, updatedAt: true })
+export const UserCreateSchema = UserSchema.omit({ userID: true, role: true, createdAt: true, updatedAt: true });
 export const UserUpdateSchema = UserSchema.partial().omit({ userID: true, createdAt: true, updatedAt: true });
-export const UserPublicSchema = UserSchema.omit({ passwordHash: true});
-export const UserLoginSchema = UserSchema.pick({ email: true}).extend({ password: z.string().min(8, "Password must be at least 8 characters long") });
+export const UserPublicSchema = UserSchema.omit({ passwordHash: true });
+export const UserLoginSchema = UserSchema.pick({ email: true }).extend({ password: z.string().min(8, "Password must be at least 8 characters long") });
 export const UserSignupSchema = UserLoginSchema.extend({ name: z.string().min(3, "Name is required") });
+export const UserChangePasswordSchema = z.object({
+    currentPassword: z.string().min(8, "Current password must be at least 8 characters long"),
+    newPassword: z.string().min(8, "New password must be at least 8 characters long"),
+});
+export const UserChangeRoleSchema = z.object({
+    role: z.enum(['BASIC', 'ADMIN']),
+});
 
 export type User = z.infer<typeof UserSchema>;
 export type UserCreate = z.infer<typeof UserCreateSchema>;
@@ -22,6 +29,8 @@ export type UserUpdate = z.infer<typeof UserUpdateSchema>;
 export type UserPublic = z.infer<typeof UserPublicSchema>;
 export type UserLogin = z.infer<typeof UserLoginSchema>;
 export type UserSignup = z.infer<typeof UserSignupSchema>;
+export type UserChangePassword = z.infer<typeof UserChangePasswordSchema>;
+export type UserChangeRole = z.infer<typeof UserChangeRoleSchema>;
 
 export type LoginResponse = {
     user: UserPublic;
