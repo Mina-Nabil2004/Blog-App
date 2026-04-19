@@ -5,7 +5,7 @@ import prisma from "../lib/prisma.js";
 export async function createTag(data: TagCreate): Promise<Tag> {
     const existing = await prisma.tag.findUnique({ where: { name: data.name } });
     if (existing)
-        throw ApiError.badRequest({ name: `Tag "${data.name}" already exists` });
+        throw ApiError.badRequest({ name: `Tag ${data.name} already exists` });
     
     return await prisma.tag.create({ data });
 }
