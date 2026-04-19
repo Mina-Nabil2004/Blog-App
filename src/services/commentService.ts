@@ -1,8 +1,6 @@
-import { PrismaClient } from "../generated/prisma/client.js";
 import ApiError from "../errors/ApiError.js";
 import type { Comment, CommentCreate, CommentUpdate } from "../schemas/commentSchema.js";
-
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma.js";
 
 export async function createComment(data: CommentCreate): Promise<Comment> {
   return await prisma.comment.create({ data });

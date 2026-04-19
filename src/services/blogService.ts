@@ -1,7 +1,6 @@
 import ApiError from "../errors/ApiError.js";
 import type { Blog, BlogCreate, BlogUpdate } from "../schemas/blogSchema.js";
-import { PrismaClient } from "../generated/prisma/client.js";
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma.js";
 
 export async function createBlog(blogData: BlogCreate): Promise<Blog> {
     const author = await prisma.user.findUnique({ where: { userID: blogData.authorID } });
@@ -29,9 +28,8 @@ export async function updateBlog(id: string, updatedBlog: BlogUpdate): Promise<B
     if (!blog) {
         throw ApiError.notFound({ id: `Blog with id ${id} not found` });
     }
-    Object.assign(blog, updatedBlog);
-    await prisma.blog.update({ where: { blogID: id }, data: blog });
-    return blog;
+    const updated = await prisma.blog.update({ where: { blogID: id }, data: updatedBlog });
+    return updated;
 }
 
 export async function deleteBlog(id: string): Promise<void> {

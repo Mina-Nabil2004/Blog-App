@@ -1,18 +1,12 @@
-import ApiError from "../errors/ApiError";
-import type { User, UserCreate, UserLogin, UserPublic, LoginResponse } from "../schemas/userSchema.js";
-import { PrismaClient } from "../generated/prisma/client.js";
+import ApiError from "../errors/ApiError.js";
+import type { UserLogin, UserSignup, UserPublic, LoginResponse } from "../schemas/userSchema.js";
+import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, omitPassword } from "./userService";
-const prisma = new PrismaClient();
+import { createUser, omitPassword } from "./userService.js";
 
-export async function signupUser(userData: UserCreate): Promise<UserPublic> {
-    const emailTaken = await prisma.user.findUnique({ where: { email: userData.email } });
-    if (emailTaken) {
-        throw ApiError.badRequest({ email: `Email ${userData.email} is already taken` });
-    }
-
-    const passwordHash = await bcrypt.hash(userData.passwordHash, 10);
+export async function signupUser(userData: UserSignup): Promise<UserPublic> {
+    const passwordHash = await bcrypt.hash(userData.password, 10);
     const user = await createUser({ name: userData.name, email: userData.email, passwordHash });
 
     return user;
@@ -24,7 +18,7 @@ export async function loginUser(userData: UserLogin): Promise<LoginResponse> {
         throw ApiError.unauthorized({ email: `User with email ${userData.email} not found` });
     }
 
-    const isPasswordValid = await bcrypt.compare(userData.passwordHash, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(userData.password, user.passwordHash);
     if (!isPasswordValid) {
         throw ApiError.unauthorized({ password: "Invalid password" });
     }
@@ -43,7 +37,7 @@ export async function loginUser(userData: UserLogin): Promise<LoginResponse> {
 }
 
 export async function logoutUser(refreshToken: string): Promise<void> {
-    await prisma.refreshToken.delete({ where: { token: refreshToken } });
+    await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
 }
 
 export async function refreshAccessToken(refreshToken: string): Promise<{ accessToken: string }> {

@@ -1,7 +1,6 @@
 import ApiError from "../errors/ApiError.js";
 import type { User, UserCreate, UserPublic, UserUpdate } from "../schemas/userSchema.js";
-import { PrismaClient } from "../generated/prisma/client.js";
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma.js";
 
 export async function createUser(userData: UserCreate): Promise<UserPublic> {
     const emailTaken = await prisma.user.findUnique({ where: { email: userData.email } });
@@ -41,9 +40,8 @@ export async function updateUser(id: string, updatedUser: UserUpdate): Promise<U
             throw ApiError.badRequest({ email: "Email already taken" });
         }
     }
-    Object.assign(user, updatedUser);
-    await prisma.user.update({ where: { userID: id }, data: user });
-    return omitPassword(user);
+    const updated = await prisma.user.update({ where: { userID: id }, data: updatedUser });
+    return omitPassword(updated);
 }
 
 export async function deleteUser(id: string): Promise<void> {

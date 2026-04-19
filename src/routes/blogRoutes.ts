@@ -1,5 +1,6 @@
 import { Router } from "express";
 import validator from "../middlewares/validator.js";
+import authenticate from "../middlewares/authenticate.js";
 import { BlogCreateSchema, BlogUpdateSchema } from "../schemas/blogSchema.js";
 import { 
   createBlogController, 
@@ -15,10 +16,10 @@ router.get("/", getBlogsController);
 
 router.get("/:id", getBlogController);
 
-router.post("/",validator(BlogCreateSchema), createBlogController);
+router.post("/", authenticate, validator(BlogCreateSchema), createBlogController);
 
-router.patch("/:id", validator(BlogUpdateSchema), updateBlogController);
+router.patch("/:id", authenticate, validator(BlogUpdateSchema), updateBlogController);
 
-router.delete("/:id", deleteBlogController);
+router.delete("/:id", authenticate, deleteBlogController);
 
 export default router;

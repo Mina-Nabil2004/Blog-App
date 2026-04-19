@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { CommentCreateSchema, CommentUpdateSchema } from "../schemas/commentSchema.js";
 import validator from "../middlewares/validator.js";
+import authenticate from "../middlewares/authenticate.js";
 import { 
   createCommentController, 
   deleteCommentController, 
@@ -15,10 +16,10 @@ router.get("/", getCommentsController);
 
 router.get("/:id", getCommentController);
 
-router.post("/",validator(CommentCreateSchema), createCommentController);
+router.post("/", authenticate, validator(CommentCreateSchema), createCommentController);
 
-router.patch("/:id", validator(CommentUpdateSchema), updateCommentController);
+router.patch("/:id", authenticate, validator(CommentUpdateSchema), updateCommentController);
 
-router.delete("/:id", deleteCommentController);
+router.delete("/:id", authenticate, deleteCommentController);
 
 export default router;
