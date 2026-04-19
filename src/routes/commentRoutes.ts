@@ -11,17 +11,11 @@ import {
 const router = Router();
 
 router.get("/", getCommentsController);
-
 router.get("/blog/:blogID", getCommentsByBlogController);
-
 router.get("/user/:userID", getCommentsByUserController);
-
 router.get("/:id", getCommentController);
-
 router.post("/", authenticate, validator(CommentCreateSchema), createCommentController);
-
 router.patch("/:id", authenticate, validator(CommentUpdateSchema), updateCommentController);
-
 router.delete("/:id", authenticate, deleteCommentController);
 
 export default router;

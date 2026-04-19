@@ -9,6 +9,9 @@
     "build": "tsc",
     "start": "node dist/server.js"
   },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -18,14 +18,20 @@ export async function getUserController(req: Request, res: Response, next: NextF
 export async function createUserController(req: Request, res: Response, next: NextFunction) {
     try {
         const user = await createUser(req.body);
-        res.status(201).json({ message: "User created successfully", user });
+        res.status(201).json({
+             message: "User created successfully", 
+             user 
+        });
     } catch (error) { next(error); }
 }
 
 export async function updateUserController(req: Request, res: Response, next: NextFunction) {
     try {
         const user = await updateUser(req.params.id as string, req.body);
-        res.json({ message: "User updated successfully", user });
+        res.json({ 
+            message: "User updated successfully", 
+            user 
+        });
     } catch (error) { next(error); }
 }
 
@@ -39,7 +45,10 @@ export async function changePasswordController(req: Request, res: Response, next
 export async function changeRoleController(req: Request, res: Response, next: NextFunction) {
     try {
         const user = await changeRole(req.params.id as string, req.body);
-        res.json({ message: "Role changed successfully", user });
+        res.json({ 
+            message: "Role changed successfully", 
+            user 
+        });
     } catch (error) { next(error); }
 }
 

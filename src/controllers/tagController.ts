@@ -18,14 +18,20 @@ export async function getTagController(req: Request, res: Response, next: NextFu
 export async function createTagController(req: Request, res: Response, next: NextFunction) {
     try {
         const tag = await createTag(req.body);
-        res.status(201).json({ message: "Tag created successfully", tag });
+        res.status(201).json({ 
+            message: "Tag created successfully", 
+            tag 
+        });
     } catch (err) { next(err); }
 }
 
 export async function updateTagController(req: Request, res: Response, next: NextFunction) {
     try {
         const tag = await updateTag(req.params.id as string, req.body);
-        res.json({ message: "Tag updated successfully", tag });
+        res.json({ 
+            message: "Tag updated successfully", 
+            tag 
+        });
     } catch (err) { next(err); }
 }
 

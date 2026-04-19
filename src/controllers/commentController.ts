@@ -4,7 +4,10 @@ import { createComment, getComment, getComments, getCommentsByBlog, getCommentsB
 export async function createCommentController(req: Request, res: Response, next: NextFunction) {
     try {
         const comment = await createComment(req.body);
-        res.status(201).json({ message: "Comment created successfully", comment });
+        res.status(201).json({ 
+            message: "Comment created successfully", 
+            comment 
+        });
     } catch (err) { next(err); }
 }
 
@@ -40,7 +43,10 @@ export async function updateCommentController(req: Request, res: Response, next:
     try {
         const { userID } = req.user as { userID: string };
         const comment = await updateComment(req.params.id as string, req.body, userID);
-        res.json({ message: "Comment updated successfully", comment });
+        res.json({ 
+            message: "Comment updated successfully", 
+            comment 
+        });
     } catch (err) { next(err); }
 }
 

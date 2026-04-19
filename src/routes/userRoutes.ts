@@ -12,21 +12,13 @@ import {
 const router = Router();
 
 router.get("/", authenticate, getUsersController);
-
 router.get("/:id", authenticate, getUserController);
-
 router.get("/:id/blogs", authenticate, getUserBlogsController);
-
 router.get("/:id/comments", authenticate, getUserCommentsController);
-
 router.post("/", validator(UserCreateSchema), createUserController);
-
 router.patch("/:id", authenticate, validator(UserUpdateSchema), updateUserController);
-
 router.patch("/:id/password", authenticate, validator(UserChangePasswordSchema), changePasswordController);
-
 router.patch("/:id/role", authenticate, authorize("ADMIN"), validator(UserChangeRoleSchema), changeRoleController);
-
 router.delete("/:id", authenticate, authorize("ADMIN"), deleteUserController);
 
 export default router;

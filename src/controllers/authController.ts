@@ -29,9 +29,7 @@ export async function logoutController(req: Request, res: Response, next: NextFu
     try {
         const { refreshToken } = req.body;
         await logoutUser(refreshToken);
-        res.json({
-            message: "User logged out successfully"
-        });
+        res.json({ message: "User logged out successfully" });
     } catch (error) {
         next(error);
     }

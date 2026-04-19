@@ -32,14 +32,20 @@ export async function getBlogController(req: Request, res: Response, next: NextF
 export async function createBlogController(req: Request, res: Response, next: NextFunction) {
     try {
         const blog = await createBlog(req.body);
-        res.status(201).json({ message: "Blog created successfully", blog });
+        res.status(201).json({ 
+            message: "Blog created successfully", 
+            blog 
+        });
     } catch (error) { next(error); }
 }
 
 export async function updateBlogController(req: Request, res: Response, next: NextFunction) {
     try {
         const blog = await updateBlog(req.params.id as string, req.body);
-        res.json({ message: "Blog updated successfully", blog });
+        res.json({ 
+            message: "Blog updated successfully", 
+            blog 
+        });
     } catch (error) { next(error); }
 }
 
@@ -47,7 +53,10 @@ export async function publishBlogController(req: Request, res: Response, next: N
     try {
         const { userID } = req.user as { userID: string };
         const blog = await publishBlog(req.params.id as string, userID);
-        res.json({ message: "Blog published successfully", blog });
+        res.json({ 
+            message: "Blog published successfully", 
+            blog 
+        });
     } catch (error) { next(error); }
 }
 
@@ -55,7 +64,10 @@ export async function unpublishBlogController(req: Request, res: Response, next:
     try {
         const { userID } = req.user as { userID: string };
         const blog = await unpublishBlog(req.params.id as string, userID);
-        res.json({ message: "Blog unpublished successfully", blog });
+        res.json({ 
+            message: "Blog unpublished successfully", 
+            blog 
+        });
     } catch (error) { next(error); }
 }
 
