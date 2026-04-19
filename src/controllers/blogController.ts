@@ -1,54 +1,80 @@
 import { NextFunction, Request, Response } from "express";
-import { createBlog, deleteBlog, getBlog, getBlogs, updateBlog } from "../services/blogService.js";
+import { createBlog, deleteBlog, getBlog, getBlogs, getPublishedBlogs, getBlogsByUser, updateBlog, publishBlog, unpublishBlog } from "../services/blogService.js";
 
-export function getBlogsController(_req: Request, res: Response, next: NextFunction) {
+export async function getBlogsController(_req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ blogs: getBlogs() });
-    } 
-    catch (error) {
-        next(error);
-    }
+        const blogs = await getBlogs();
+        res.json({ blogs });
+    } catch (error) { next(error); }
 }
 
-export function getBlogController(req: Request, res: Response, next: NextFunction) {
+export async function getPublishedBlogsController(_req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ blog: getBlog(req.params.id as string) });
-    } 
-    catch (error) {
-        next(error);
-    }
+        const blogs = await getPublishedBlogs();
+        res.json({ blogs });
+    } catch (error) { next(error); }
 }
 
-export function createBlogController(req: Request, res: Response, next: NextFunction) {
+export async function getBlogsByUserController(req: Request, res: Response, next: NextFunction) {
     try {
+        const blogs = await getBlogsByUser(req.params.userID as string);
+        res.json({ blogs });
+    } catch (error) { next(error); }
+}
+
+export async function getBlogController(req: Request, res: Response, next: NextFunction) {
+    try {
+        const blog = await getBlog(req.params.id as string);
+        res.json({ blog });
+    } catch (error) { next(error); }
+}
+
+export async function createBlogController(req: Request, res: Response, next: NextFunction) {
+    try {
+        const blog = await createBlog(req.body);
         res.status(201).json({ 
-            message: "Blog created successfully",
-            blog: createBlog(req.body)
+            message: "Blog created successfully", 
+            blog 
         });
-    } 
-    catch (error) {
-        next(error);
-    }
+    } catch (error) { next(error); }
 }
 
-export function updateBlogController(req: Request, res: Response, next: NextFunction) {
+export async function updateBlogController(req: Request, res: Response, next: NextFunction) {
     try {
-        res.status(200).json({ 
+        const blog = await updateBlog(req.params.id as string, req.body);
+        res.json({ 
             message: "Blog updated successfully", 
-            blog: updateBlog(req.params.id as string, req.body) 
+            blog 
         });
-    } 
-    catch (error) {
-        next(error);
-    }
+    } catch (error) { next(error); }
 }
 
-export function deleteBlogController(req: Request, res: Response, next: NextFunction) {
+export async function publishBlogController(req: Request, res: Response, next: NextFunction) {
     try {
-        deleteBlog(req.params.id as string);
-        res.status(200).json({ message: "Blog deleted successfully" });
-    } 
-    catch (error) {
-        next(error);
-    }
+        const { userID } = req.user as { userID: string };
+        const blog = await publishBlog(req.params.id as string, userID);
+        res.json({ 
+            message: "Blog published successfully", 
+            blog 
+        });
+    } catch (error) { next(error); }
+}
+
+export async function unpublishBlogController(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { userID } = req.user as { userID: string };
+        const blog = await unpublishBlog(req.params.id as string, userID);
+        res.json({ 
+            message: "Blog unpublished successfully", 
+            blog 
+        });
+    } catch (error) { next(error); }
+}
+
+export async function deleteBlogController(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { userID, role } = req.user as { userID: string; role: string };
+        await deleteBlog(req.params.id as string, userID, role);
+        res.json({ message: "Blog deleted successfully" });
+    } catch (error) { next(error); }
 }

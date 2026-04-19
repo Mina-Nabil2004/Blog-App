@@ -1,14 +1,17 @@
 import { z } from "zod";
 
 export const BlogSchema = z.object({
-    id: z.string().uuid(),
-    title: z.string().min(3, "Title is required"),
+    blogID: z.string().uuid(),
+    title: z.string().min(3, "Title must be at least 3 characters long"),
     content: z.string().min(5, "Content must be at least 5 characters long"),
-    authorId: z.string().uuid("authorId must be a valid UUID"),
+    authorID: z.string().uuid("authorId must be a valid UUID"),
+    published: z.boolean().default(false),
+    createdAt: z.date(),
+    updatedAt: z.date(),
 });
 
-export const BlogCreateSchema = BlogSchema.omit({ id: true });
-export const BlogUpdateSchema = BlogSchema.partial().omit({ id: true });
+export const BlogCreateSchema = BlogSchema.omit({ blogID: true, createdAt: true, updatedAt: true });
+export const BlogUpdateSchema = BlogSchema.partial().omit({ blogID: true, createdAt: true, updatedAt: true });
 
 export type Blog = z.infer<typeof BlogSchema>;
 export type BlogCreate = z.infer<typeof BlogCreateSchema>;
